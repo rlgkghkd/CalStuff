@@ -15,7 +15,6 @@ public class Main {
 
             // 수식정리: 빈칸 없앰
             inputFormula= inputFormula.replaceAll(" ", "");
-            System.out.println("정리한 수식: "+ inputFormula);
 
             // 스택에 기호 저장, 큐에 숫자 저장, postFix에 수식 구현
             // 굳이 큐를 쓰는 이유는 괄호 이후에 곱셈기호를 생략하고 그냥 숫자만 적을 수 있으므로
@@ -33,7 +32,6 @@ public class Main {
                     // 현재 문자가 숫자인 경우
                     // 숫자는 큐에 들어간다.
                     q.add(c);
-                    System.out.println(c+ " 를 큐에 더함");
 
                 } else if (c== '*'|| c== '/'|| c== '%') {
                     // 곱셈, 나눗셈, 모듈러 연산인 경우
@@ -41,14 +39,14 @@ public class Main {
                     // 기호는 스택에 넣는다.
                     while (!(q.peek()== null)){
                         postFix.add(q.poll());
-                        System.out.println("현재 문자열: "+ postFix);
                     }
+
+                    //괄호 이전이 숫자였을 경우 빈칸을 더해 숫자임을 구분하게 한다.
                     if (temp>= '0' && temp<= '9'){
                         postFix.add(' ');
                     }
-                    System.out.println(c+ " 를 스택에 더함");
+
                     stack.push(c);
-                    System.out.println("현재 문자열: "+ postFix);
 
                 } else if (c== '(' ) {
                     // 앞 괄호인 경우
@@ -57,16 +55,16 @@ public class Main {
                     if (q.peek()== null) {
                         q.add('1');
                     }
+
                     while (!(q.peek()== null)){
                         postFix.add(q.poll());
-                        System.out.println("현재 문자열: "+ postFix);
                     }
+
                     if (temp>= '0' && temp<= '9'){
                         postFix.add(' ');
                     }
-                    System.out.println(c+ " 를 스택에 더함");
+
                     stack.push(c);
-                    System.out.println("현재 문자열: "+ postFix);
 
                 } else if (c== ')') {
                     // 뒤 괄호인 경우
@@ -74,16 +72,14 @@ public class Main {
                     // 스택에서 괄호까지 전부 수식에 더해준다
                     while (!(q.peek()== null)){
                         postFix.add(q.poll());
-                        System.out.println("현재 문자열: "+ postFix);
                     }
+                    
                     if (temp>= '0' && temp<= '9'){
                         postFix.add(' ');
                     }
+
                     while (!stack.isEmpty() && stack.peek() != '(') {
-                        char poped= stack.pop();
-                        System.out.println("스택에서 "+ poped+ " pop");
-                        postFix.add(poped);
-                        System.out.println("현재 문자열: "+ postFix);
+                        postFix.add(stack.pop());
                     }
                     if (!stack.isEmpty()){
                         postFix.add(stack.pop());
@@ -96,47 +92,34 @@ public class Main {
                     // 덧셈, 뺄셈은 맨 마지막에 연산되므로.
                     while (!(q.peek()== null)){
                         postFix.add(q.poll());
-                        System.out.println("현재 문자열: "+ postFix);
                     }
                     if (temp>= '0' && temp<= '9'){
                         postFix.add(' ');
                     }
                     while (!stack.isEmpty() && stack.peek() != '(') {
-                        char poped= stack.pop();
-                        System.out.println("스택에서 "+ poped+ " pop");
-                        postFix.add(poped);
-                        System.out.println("현재 문자열: "+ postFix);
+                        postFix.add(stack.pop());
                     }
                     stack.push(c);
-                    System.out.println(c+ " 를 스택에 더함");
                 }
                 temp= c;
             }
 
             // 못 턴 기호나 숫자를 마지막으로 털어준다.
             // 이유나 원인까지는 알겠는데, 이걸로 발생할 오류는 예측 못하겠다.
-            System.out.println("마무리");
             while (!(q.peek()== null)){
                 postFix.add(q.poll());
-                System.out.println("현재 문자열: "+ postFix);
             }
             if (temp>= '0' && temp<= '9'){
                 postFix.add(' ');
             }
             while (!stack.isEmpty()) {
-                char poped= stack.pop();
-                System.out.println("스택에서 "+ poped+ " pop");
-                postFix.add(poped);
-                System.out.println("현재 문자열: "+ postFix);
+                postFix.add(stack.pop());
             }
 
             String postfixString= postFix.toString();
             postfixString= postfixString.replaceAll("[\\[\\]]", "");
             String[] splited= postfixString.split(", ");
-            for (String s : splited) {
-                System.out.println(s);
-            }
-            System.out.println();
+
             //12 3 4 5 -(6 /+7 8 9 *( 이런 문자열이 만들어진다.
 
             //이제 숫자를 스택에 넣고, 기호가 나올 때 마다 스택에서 숫자를 꺼내 연산한다.
@@ -151,24 +134,20 @@ public class Main {
                 Integer number=0;
                 if (c>= '0' && c<= '9'){
                     number= Integer.parseInt(s);
-                    System.out.println("이번 숫자는 "+ number);
                 }
                 if (number>=0 && number<=9 && c!= ' '){
                     numberTemp= numberTemp+ number.toString();
-                    System.out.println("더한 숫자는 "+ numberTemp);
                 }
 
                 if (c== ' '){
                     computeStack.push(Integer.parseInt(numberTemp));
-                    System.out.println("푸쉬합니다: "+ numberTemp);
                     numberTemp= "";
                 }
 
                 if (c== '+'|| c== '-'|| c== '*'|| c== '/'|| c== '('|| c== '%'){
                     int right= computeStack.pop();
-                    System.out.println("오른숫자는: "+ right);
                     int left= computeStack.pop();
-                    System.out.println("왼 숫자는: "+ left);
+
                     //향상된 스위치문
                     //오 좋은데.
                     int result = switch (c) {
@@ -179,7 +158,6 @@ public class Main {
                         case '%' -> left % right;
                         default -> 0;
                     };
-                    System.out.println("연산결과 "+ result);
                     computeStack.push(result);
                 }
             }
