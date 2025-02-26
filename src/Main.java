@@ -54,6 +54,7 @@ public class Main {
                     // 없으면 1을 더해준다(괄호를 곱셈기호로 사용할 예정
                     if (q.peek()== null) {
                         q.add('1');
+                        q.add(' ');
                     }
 
                     while (!(q.peek()== null)){
