@@ -17,9 +17,9 @@ public class Main {
             if (inputFormula.equals("exit")) {break;}
             
             // 후위표기식 변환
-            String[] postFixed= calculator.postFix(inputFormula);
+            List<String> postFixed= calculator.postFix(inputFormula);
 
-
+            /*
             Stack<Integer> computeStack = new Stack<>();
             String numberTemp= "";
             for (String s : postFixed) {
@@ -59,7 +59,9 @@ public class Main {
                     computeStack.push(result);
                 }
             }
+                
             System.out.println("연산결과는: " + computeStack.pop());
+             */
         }
         sc.close();
     }

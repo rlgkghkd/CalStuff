@@ -1,4 +1,5 @@
 
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,8 +11,9 @@ public class Calculator {
     // 후위전환식용 스택, 큐, 리스트, 임시문자
     Stack<Character> stack = new Stack<>();
     Queue<Character> q = new LinkedList<>();
-    List<Character> postFix = new ArrayList<>();
+    List<String> postFix = new ArrayList<>();
     char temp = ' ';
+    
 
     // 수식 빈칸 제거
     String removeSpace(String inputFormula) {
@@ -22,75 +24,52 @@ public class Calculator {
         q.add(c);
     }
 
-    void addCharFromQueueToList() {
-        while (!(q.peek() == null)) {
-            postFix.add(q.poll());
-            System.out.println("현재 문자열: " + postFix);
+    void addNumberToPostFix(){
+        String tempNumber="";
+        while (q.peek()!=null && !q.isEmpty()){
+            tempNumber= tempNumber+ q.poll();
         }
+        if (tempNumber!=""){postFix.add(tempNumber);}
     }
 
     void emptyStackUntillPrearentheses() {
         while (!stack.isEmpty() && stack.peek() != '(') {
-            char poped = stack.pop();
-            System.out.println("스택에서 " + poped + " pop");
-            postFix.add(poped);
-            System.out.println("현재 문자열: " + postFix);
-        }
-    }
-
-    void checkPostCharactorWasNumber() {
-        if (temp >= '0' && temp <= '9') {
-            postFix.add(' ');
+            postFix.add(stack.pop().toString());
         }
     }
 
     void dealingFastSymbols(Character c) {
-        addCharFromQueueToList();
-        checkPostCharactorWasNumber();
+        addNumberToPostFix();
         stack.push(c);
     }
 
     void dealingSlowSymbols(Character c) {
-        addCharFromQueueToList();
-        checkPostCharactorWasNumber();
+        addNumberToPostFix();
         emptyStackUntillPrearentheses();
         stack.push(c);
-        System.out.println(c + " 를 스택에 더함");
     }
 
     void dealingPrearentheses(Character c) {
         if (q.peek() == null) {
             q.add('1');
-            q.add(' ');
         }
-        addCharFromQueueToList();
-        checkPostCharactorWasNumber();
-        System.out.println(c + " 를 스택에 더함");
+        addNumberToPostFix();
         stack.push(c);
-        System.out.println("현재 문자열: " + postFix);
     }
 
     void dealingPostParentheses() {
-        addCharFromQueueToList();
-        checkPostCharactorWasNumber();
+        addNumberToPostFix();
         emptyStackUntillPrearentheses();
-        if (!stack.isEmpty()) {
-            postFix.add(stack.pop());
-        }
+        postFix.add(stack.pop().toString());
     }
 
     void postFixingWrapUp() {
-        System.out.println("마무리");
-        addCharFromQueueToList();
-        checkPostCharactorWasNumber();
+        addNumberToPostFix();
         while (!stack.isEmpty()) {
-            char poped = stack.pop();
-            System.out.println("스택에서 " + poped + " pop");
-            postFix.add(poped);
-            System.out.println("현재 문자열: " + postFix);
+            postFix.add(stack.pop().toString());
         }
     }
-
+    /* 
     String[] finisingPostFixing(List<Character> inputList) {
         String postfixString = inputList.toString();
         postfixString = postfixString.replaceAll("[\\[\\]]", "");
@@ -101,8 +80,9 @@ public class Calculator {
         System.out.println();
         return splited;
     }
+    */
 
-    String[] postFix(String inputString){
+    List<String> postFix(String inputString){
         String[] postFixed;
         removeSpace(inputString);
         for( Character c : inputString.toCharArray()){
@@ -120,11 +100,11 @@ public class Calculator {
                     }
                 }
             }
-            temp= c;
         }
         postFixingWrapUp();
-        postFixed= finisingPostFixing(postFix);
-        
-        return postFixed;
+        //postFixed= finisingPostFixing(postFix);
+        String postFixedString= postFix.toString();
+        System.out.println("후위표기식: "+ postFixedString);
+        return postFix;
     }
 }
