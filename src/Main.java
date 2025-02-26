@@ -5,9 +5,8 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc= new Scanner(System.in);
+        Calculator calculator = new Calculator();
         while (true) {
-
-            Calculator calculator = new Calculator();
 
             // 입력 받음
             System.out.println("수식 입력");
@@ -15,29 +14,22 @@ public class Main {
             System.out.println("입력받은 수식: "+ inputFormula);
             // 입력 exit면 탈출
             if (inputFormula.equals("exit")) {break;}
+
+            calculator.work(inputFormula);
             
             // 후위표기식 변환
+            /*
             List<String> postFixed= calculator.postFix(inputFormula);
 
-            /*
+            
             Stack<Integer> computeStack = new Stack<>();
-            String numberTemp= "";
             for (String s : postFixed) {
                 char c= s.charAt(0);
                 Integer number=0;
                 if (c>= '0' && c<= '9'){
-                    number= Integer.parseInt(s);
+                    number= Integer.valueOf(s);
                     System.out.println("이번 숫자는 "+ number);
-                }
-                if (number>=0 && number<=9 && c!= ' '){
-                    numberTemp= numberTemp+ number.toString();
-                    System.out.println("더한 숫자는 "+ numberTemp);
-                }
-
-                if (c== ' '){
-                    computeStack.push(Integer.parseInt(numberTemp));
-                    System.out.println("푸쉬합니다: "+ numberTemp);
-                    numberTemp= "";
+                    computeStack.push(number);
                 }
 
                 if (c== '+'|| c== '-'|| c== '*'|| c== '/'|| c== '('|| c== '%'){
@@ -62,6 +54,7 @@ public class Main {
                 
             System.out.println("연산결과는: " + computeStack.pop());
              */
+            
         }
         sc.close();
     }

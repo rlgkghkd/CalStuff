@@ -1,19 +1,19 @@
-
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
-public class Calculator {
+class Calculator {
 
     // 후위전환식용 스택, 큐, 리스트, 임시문자
-    Stack<Character> stack = new Stack<>();
-    Queue<Character> q = new LinkedList<>();
-    List<String> postFix = new ArrayList<>();
-    char temp = ' ';
-    
+    private Stack<Character> stack = new Stack<>();
+    private Queue<Character> q = new LinkedList<>();
+    private List<String> postFix = new ArrayList<>(){};
+    private char temp = ' ';
+    // 연산용 스택, 리스트
+    private Stack<Integer> computeStack = new Stack<>();
+    private List<Integer> computeList = new ArrayList<>();
 
     // 수식 빈칸 제거
     String removeSpace(String inputFormula) {
@@ -22,6 +22,14 @@ public class Calculator {
 
     void dealingNumber(Character c) {
         q.add(c);
+    }
+
+    List<Integer> getComputeList() {
+        return computeList;
+    }
+
+    void setCoputeList(List<Integer> computeList) {
+        this.computeList = computeList;
     }
 
     void addNumberToPostFix(){
@@ -69,21 +77,8 @@ public class Calculator {
             postFix.add(stack.pop().toString());
         }
     }
-    /* 
-    String[] finisingPostFixing(List<Character> inputList) {
-        String postfixString = inputList.toString();
-        postfixString = postfixString.replaceAll("[\\[\\]]", "");
-        String[] splited = postfixString.split(", ");
-        for (String s : splited) {
-            System.out.println(s);
-        }
-        System.out.println();
-        return splited;
-    }
-    */
 
-    List<String> postFix(String inputString){
-        String[] postFixed;
+    void postFix(String inputString){
         removeSpace(inputString);
         for( Character c : inputString.toCharArray()){
             switch (c) {
@@ -105,6 +100,52 @@ public class Calculator {
         //postFixed= finisingPostFixing(postFix);
         String postFixedString= postFix.toString();
         System.out.println("후위표기식: "+ postFixedString);
-        return postFix;
+        return;
+    }
+
+    void computeNumber(){
+
+        for (String s : postFix) {
+            char c= s.charAt(0);
+            Integer number=0;
+            if (c>= '0' && c<= '9'){
+                number= Integer.valueOf(s);
+                System.out.println("이번 숫자는 "+ number);
+                computeStack.push(number);
+            }
+
+            if (c== '+'|| c== '-'|| c== '*'|| c== '/'|| c== '('|| c== '%'){
+                int right= computeStack.pop();
+                System.out.println("오른숫자는: "+ right);
+                int left= computeStack.pop();
+                System.out.println("왼 숫자는: "+ left);
+                //향상된 스위치문
+                //오 좋은데.
+                int result = switch (c) {
+                    case '+' -> left + right;
+                    case '-' -> left - right;
+                    case '*', '(' -> left * right;
+                    case '/' -> left / right;
+                    case '%' -> left % right;
+                    default -> 0;
+                };
+                System.out.println("연산결과 "+ result);
+                computeStack.push(result);
+            }
+        }
+        Integer computeResult= computeStack.pop();
+        System.out.println("연산결과는: " + computeResult);
+        computeList.add(computeResult);
+        return;
+    }
+
+    void work(String inputFormula){
+        stack.clear();
+        q.clear();
+        postFix.clear();
+        computeStack.clear();
+        
+        postFix(inputFormula);
+        computeNumber();
     }
 }
