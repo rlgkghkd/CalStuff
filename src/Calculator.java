@@ -1,4 +1,3 @@
-
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,6 +35,8 @@ enum Symbols{
     Symbols(char symbol){
         this.symbol= symbol;
     }
+    //someMagicShit
+    //enum 의 이름을 밸류, 밸류를 키로 쓰는 해시맵을 만든다.
     private static final Map<Character, String> SymbolMap= Collections.unmodifiableMap(Stream.of(values()).collect(Collectors.toMap(Symbols::getSymbol, Symbols::name)));
     public static Symbols getSymbolName(char symbol){return Symbols.valueOf(SymbolMap.get(symbol));}
 
