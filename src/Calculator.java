@@ -146,8 +146,6 @@ public class Calculator {
             }
         }
         postFixingWrapUp();
-        String postFixedString= postFix.toString();
-        System.out.println("후위표기식: "+ postFixedString);
     }
 
     private void computeNumber(){
@@ -156,7 +154,6 @@ public class Calculator {
             try {
                 Double number= Double.valueOf(s);
                 number= Double.valueOf(s);
-                System.out.println("이번 숫자는 "+ number);
                 computeStack.push(number);
             } catch (NumberFormatException e){
                 Symbols symbols= Symbols.getSymbolName(s.charAt(0));
@@ -167,7 +164,7 @@ public class Calculator {
             }
         }
         Double computeResult= computeStack.pop();
-        System.out.println("연산결과는: " + computeResult);
+        System.out.println("연산결과는: " + computeResult+ "입니다.");
         computeList.add(computeResult);
     }
 
