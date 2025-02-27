@@ -29,7 +29,7 @@ class Calculator {
         while (q.peek()!=null && !q.isEmpty()){
             tempNumber= tempNumber+ q.poll();
         }
-        if (tempNumber!=""){postFix.add(tempNumber);}
+        if (!tempNumber.equals("")){postFix.add(tempNumber);}
     }
 
     private void emptyStackUntillPrearentheses() {
@@ -90,27 +90,18 @@ class Calculator {
         }
         postFixingWrapUp();
         //postFixed= finisingPostFixing(postFix);
-        String postFixedString= postFix.toString();
-        System.out.println("후위표기식: "+ postFixedString);
-        return;
     }
 
     private void computeNumber(){
 
         for (String s : postFix) {
             char c= s.charAt(0);
-            Integer number=0;
-            if (c>= '0' && c<= '9'){
-                number= Integer.valueOf(s);
-                System.out.println("이번 숫자는 "+ number);
-                computeStack.push(number);
-            }
+            if (c>= '0' && c<= '9'){computeStack.push(Integer.valueOf(s));}
 
             if (c== '+'|| c== '-'|| c== '*'|| c== '/'|| c== '('|| c== '%'){
                 int right= computeStack.pop();
-                System.out.println("오른숫자는: "+ right);
                 int left= computeStack.pop();
-                System.out.println("왼 숫자는: "+ left);
+
                 //향상된 스위치문
                 //오 좋은데.
                 int result = switch (c) {
@@ -121,14 +112,12 @@ class Calculator {
                     case '%' -> left % right;
                     default -> 0;
                 };
-                System.out.println("연산결과 "+ result);
                 computeStack.push(result);
             }
         }
         Integer computeResult= computeStack.pop();
         System.out.println("연산결과는: " + computeResult);
         computeList.add(computeResult);
-        return;
     }
 
     public void work(String inputFormula){
