@@ -1,16 +1,54 @@
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Stack;
 
-class Calculator {
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+enum Symbols{
+    PLUS('+') {
+        @Override
+        double stuff(double left, double right) {
+            return left + right;
+        }
+    }, MINUS('-'){
+        @Override
+        double stuff(double left, double right) {
+            return left - right;
+        }
+    }, MULTIPLY('*'){
+        @Override
+        double stuff(double left, double right) {
+            return left * right;
+        }
+    }, DIVIDE('/'){
+        @Override
+        double stuff(double left, double right) {
+            return left / right;
+        }
+    }, OPEN('('){
+        @Override
+        double stuff(double left, double right) {
+            return left * right;
+        }
+    };
+
+    private final char symbol;
+    abstract double stuff(double left, double right);
+    Symbols(char symbol){
+        this.symbol= symbol;
+    }
+    private static final Map<Character, String> SymbolMap= Collections.unmodifiableMap(Stream.of(values()).collect(Collectors.toMap(Symbols::getSymbol, Symbols::name)));
+    public static Symbols getSymbolName(char symbol){return Symbols.valueOf(SymbolMap.get(symbol));}
+
+
+    public char getSymbol(){return symbol;}
+}
+
+public class Calculator {
 
     // 후위전환식용 스택, 큐, 리스트, 임시문자
     private Stack<Character> stack = new Stack<>();
     private Queue<Character> q = new LinkedList<>();
     private List<String> postFix = new ArrayList<>(){};
-    private char temp = ' ';
     // 연산용 스택, 리스트
     private Stack<Integer> computeStack = new Stack<>();
     private List<Integer> computeList = new ArrayList<>();
@@ -77,22 +115,20 @@ class Calculator {
                 case '(' -> dealingPrearentheses(c);
                 case ')' -> dealingPostParentheses();
                 case '+', '-' -> dealingSlowSymbols(c);
-                case '*', '/' -> dealingFastSymbols(c);
+                case '*', '/', '%' -> dealingFastSymbols(c);
                 default -> {
                     if (Character.isDigit(c)){
                         dealingNumber(c);
                     } else {
-                        System.out.println("잘못된 문자열이 입력되었습니다.");
+                        System.out.println("잘못된 수식이 입력되었습니다.");
                         throw new IllegalArgumentException();
                     }
                 }
             }
         }
         postFixingWrapUp();
-        //postFixed= finisingPostFixing(postFix);
         String postFixedString= postFix.toString();
         System.out.println("후위표기식: "+ postFixedString);
-        return;
     }
 
     private void computeNumber(){
@@ -104,31 +140,17 @@ class Calculator {
                 number= Integer.valueOf(s);
                 System.out.println("이번 숫자는 "+ number);
                 computeStack.push(number);
-            }
-
-            if (c== '+'|| c== '-'|| c== '*'|| c== '/'|| c== '('|| c== '%'){
+            } else {
+                Symbols symbols= Symbols.getSymbolName(s.charAt(0));
                 int right= computeStack.pop();
-                System.out.println("오른숫자는: "+ right);
                 int left= computeStack.pop();
-                System.out.println("왼 숫자는: "+ left);
-                //향상된 스위치문
-                //오 좋은데.
-                int result = switch (c) {
-                    case '+' -> left + right;
-                    case '-' -> left - right;
-                    case '*', '(' -> left * right;
-                    case '/' -> left / right;
-                    case '%' -> left % right;
-                    default -> 0;
-                };
-                System.out.println("연산결과 "+ result);
-                computeStack.push(result);
+                double result= symbols.stuff(left, right);
+                computeStack.push((int)result);
             }
         }
         Integer computeResult= computeStack.pop();
         System.out.println("연산결과는: " + computeResult);
         computeList.add(computeResult);
-        return;
     }
 
     public void work(String inputFormula){
