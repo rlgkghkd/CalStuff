@@ -50,9 +50,11 @@ public class Calculator {
     private Stack<Character> stack = new Stack<>();
     private Queue<Character> q = new LinkedList<>();
     private List<String> postFix = new ArrayList<>(){};
+    private boolean symbolize= false;
     // 연산용 스택, 리스트
-    private Stack<Integer> computeStack = new Stack<>();
-    private List<Integer> computeList = new ArrayList<>();
+    private Stack<Double> computeStack = new Stack<>();
+    private List<Double> computeList = new ArrayList<>();
+    private String temp= "";
 
     // 수식 빈칸 제거
     String removeSpace(String inputFormula) {
@@ -60,7 +62,12 @@ public class Calculator {
     }
 
     private void dealingNumber(Character c) {
+        if (symbolize){
+            q.add('-');
+            symbolize= false;
+        }
         q.add(c);
+        temp=c.toString();
     }
 
     private void addNumberToPostFix(){
@@ -80,26 +87,34 @@ public class Calculator {
     private void dealingFastSymbols(Character c) {
         addNumberToPostFix();
         stack.push(c);
+        temp="";
     }
 
     private void dealingSlowSymbols(Character c) {
+        if (temp.isEmpty() && c== '-'){
+            symbolize= true;
+            temp="";
+            return;
+        }
         addNumberToPostFix();
-        emptyStackUntillPrearentheses();
         stack.push(c);
+        temp="";
     }
 
-    private void dealingPrearentheses(Character c) {
+    private void dealingPrearentheses() {
         if (q.peek() == null) {
             q.add('1');
         }
         addNumberToPostFix();
-        stack.push(c);
+        stack.push('(');
+        temp="";
     }
 
     private void dealingPostParentheses() {
         addNumberToPostFix();
         emptyStackUntillPrearentheses();
         postFix.add(stack.pop().toString());
+        temp="";
     }
 
     private void postFixingWrapUp() {
@@ -107,16 +122,19 @@ public class Calculator {
         while (!stack.isEmpty()) {
             postFix.add(stack.pop().toString());
         }
+        temp="";
     }
 
     private void postFix (String inputString) throws IllegalArgumentException{
-        removeSpace(inputString);
-        for( Character c : inputString.toCharArray()){
+        String workingString= removeSpace(inputString);
+        System.out.println(workingString);
+        for( Character c : workingString.toCharArray()){
             switch (c) {
-                case '(' -> dealingPrearentheses(c);
+                case '(' -> dealingPrearentheses();
                 case ')' -> dealingPostParentheses();
                 case '+', '-' -> dealingSlowSymbols(c);
                 case '*', '/', '%' -> dealingFastSymbols(c);
+                case '.'-> dealingNumber(c);
                 default -> {
                     if (Character.isDigit(c)){
                         dealingNumber(c);
@@ -135,21 +153,20 @@ public class Calculator {
     private void computeNumber(){
 
         for (String s : postFix) {
-            char c= s.charAt(0);
-            Integer number=0;
-            if (c>= '0' && c<= '9'){
-                number= Integer.valueOf(s);
+            try {
+                Double number= Double.valueOf(s);
+                number= Double.valueOf(s);
                 System.out.println("이번 숫자는 "+ number);
                 computeStack.push(number);
-            } else {
+            } catch (NumberFormatException e){
                 Symbols symbols= Symbols.getSymbolName(s.charAt(0));
-                int right= computeStack.pop();
-                int left= computeStack.pop();
+                double right= computeStack.pop();
+                double left= computeStack.pop();
                 double result= symbols.stuff(left, right);
-                computeStack.push((int)result);
+                computeStack.push((double)result);
             }
         }
-        Integer computeResult= computeStack.pop();
+        Double computeResult= computeStack.pop();
         System.out.println("연산결과는: " + computeResult);
         computeList.add(computeResult);
     }
