@@ -20,11 +20,11 @@ class Calculator {
         return inputFormula.replaceAll(" ", "");
     }
 
-    void dealingNumber(Character c) {
+    private void dealingNumber(Character c) {
         q.add(c);
     }
 
-    void addNumberToPostFix(){
+    private void addNumberToPostFix(){
         String tempNumber="";
         while (q.peek()!=null && !q.isEmpty()){
             tempNumber= tempNumber+ q.poll();
@@ -32,24 +32,24 @@ class Calculator {
         if (tempNumber!=""){postFix.add(tempNumber);}
     }
 
-    void emptyStackUntillPrearentheses() {
+    private void emptyStackUntillPrearentheses() {
         while (!stack.isEmpty() && stack.peek() != '(') {
             postFix.add(stack.pop().toString());
         }
     }
 
-    void dealingFastSymbols(Character c) {
+    private void dealingFastSymbols(Character c) {
         addNumberToPostFix();
         stack.push(c);
     }
 
-    void dealingSlowSymbols(Character c) {
+    private void dealingSlowSymbols(Character c) {
         addNumberToPostFix();
         emptyStackUntillPrearentheses();
         stack.push(c);
     }
 
-    void dealingPrearentheses(Character c) {
+    private void dealingPrearentheses(Character c) {
         if (q.peek() == null) {
             q.add('1');
         }
@@ -57,20 +57,20 @@ class Calculator {
         stack.push(c);
     }
 
-    void dealingPostParentheses() {
+    private void dealingPostParentheses() {
         addNumberToPostFix();
         emptyStackUntillPrearentheses();
         postFix.add(stack.pop().toString());
     }
 
-    void postFixingWrapUp() {
+    private void postFixingWrapUp() {
         addNumberToPostFix();
         while (!stack.isEmpty()) {
             postFix.add(stack.pop().toString());
         }
     }
 
-    void postFix (String inputString) throws IllegalArgumentException{
+    private void postFix (String inputString) throws IllegalArgumentException{
         removeSpace(inputString);
         for( Character c : inputString.toCharArray()){
             switch (c) {
@@ -95,7 +95,7 @@ class Calculator {
         return;
     }
 
-    void computeNumber(){
+    private void computeNumber(){
 
         for (String s : postFix) {
             char c= s.charAt(0);
@@ -131,7 +131,7 @@ class Calculator {
         return;
     }
 
-    void work(String inputFormula){
+    public void work(String inputFormula){
         stack.clear();
         q.clear();
         postFix.clear();
@@ -140,13 +140,13 @@ class Calculator {
         postFix(inputFormula);
         computeNumber();
     }
-    boolean isListEmpty(){return computeList.isEmpty();}
-    int getSize(){return computeList.size();}
-    void checkResult(int i){
+    public boolean isListEmpty(){return computeList.isEmpty();}
+    public int getSize(){return computeList.size();}
+    public void checkResult(int i){
         System.out.println(i+ "번 결과는: "+ computeList.get(i-1));
     }
-    void deleteResult(int i){
+    public void deleteResult(int i){
         computeList.remove(i-1);
     }
-    void clearComputeList(){ computeList.clear();}
+    public void clearComputeList(){ computeList.clear();}
 }
