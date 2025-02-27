@@ -189,4 +189,13 @@ public class Calculator {
         computeList.remove(i-1);
     }
     public void clearComputeList(){ computeList.clear();}
+
+    public void isBigger(Double input){
+        List<Double> biggerList= computeList.stream().filter(x-> x>input).toList();
+        if(biggerList.isEmpty()){
+            System.out.println("입력하신 숫자보다 큰 수는 없습니다.");
+        } else {
+            System.out.println("입력하신 숫자보다 큰 결과는: "+ biggerList+ "입니다");
+        }
+    }
 }

@@ -16,6 +16,11 @@ public class Main {
                 // 입력 exit면 탈출
                 switch (inputFormula) {
                     case "exit" -> flag= false;
+
+                    case "bigger"-> {
+                        calculator.isBigger(sc.nextDouble());
+                        sc.nextLine();
+                    }
                     
                     case "check" -> {
                         while (true){
