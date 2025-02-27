@@ -6,55 +6,86 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc= new Scanner(System.in);
         Calculator calculator = new Calculator();
-        while (true) {
+        boolean flag= true;
+        while (flag== true) {
 
             // 입력 받음
             System.out.println("수식 입력");
             String inputFormula= sc.nextLine();
-            System.out.println("입력받은 수식: "+ inputFormula);
+
             // 입력 exit면 탈출
-            if (inputFormula.equals("exit")) {break;}
+            switch (inputFormula) {
+                case "exit":
+                    flag= false;
+                    break;
 
-            calculator.work(inputFormula);
-            
-            // 후위표기식 변환
-            /*
-            List<String> postFixed= calculator.postFix(inputFormula);
+                case "check":
+                    while (true){
+                        if (calculator.isListEmpty()){
+                            System.out.println("현재 연산결과가 없습니다.\n 처음으로 돌아갑니다.");
+                            break;
+                        }
+                        System.out.println("현재 연산결과는 "+ calculator.getSize()+ "개 있습니다.");
+                        System.out.println("조회를 원하는 결과의 번호를 입력해주세요\n 1~ "+ calculator.getSize()+"\n 결과조회를 나가시려면 0을 입력하세요");
 
-            
-            Stack<Integer> computeStack = new Stack<>();
-            for (String s : postFixed) {
-                char c= s.charAt(0);
-                Integer number=0;
-                if (c>= '0' && c<= '9'){
-                    number= Integer.valueOf(s);
-                    System.out.println("이번 숫자는 "+ number);
-                    computeStack.push(number);
-                }
+                        try{
+                            int checkNum= sc.nextInt();
 
-                if (c== '+'|| c== '-'|| c== '*'|| c== '/'|| c== '('|| c== '%'){
-                    int right= computeStack.pop();
-                    System.out.println("오른숫자는: "+ right);
-                    int left= computeStack.pop();
-                    System.out.println("왼 숫자는: "+ left);
-                    //향상된 스위치문
-                    //오 좋은데.
-                    int result = switch (c) {
-                        case '+' -> left + right;
-                        case '-' -> left - right;
-                        case '*', '(' -> left * right;
-                        case '/' -> left / right;
-                        case '%' -> left % right;
-                        default -> 0;
-                    };
-                    System.out.println("연산결과 "+ result);
-                    computeStack.push(result);
-                }
+                            if (checkNum==0){
+                                //무슨 이유인지는 모르겠는데, 연산결과조회 반복문이 닫힐 때 sc.nextInt()가 살아 남아있는 듯 하다.
+                                //때문에 다음 반복문으로 넘어갈 때 sc.nextLine에서 입력을 받지 않고 바로 수식 확인으로 넘어가버린다.
+                                //sc.nextLine()을 여기서 넣어서 미리 스캐너를 초기화해준다.
+                                sc.nextLine();
+                                break;
+                            }
+                            calculator.checkResult(checkNum);
+                        }
+                        catch (InputMismatchException e){
+                            System.out.println("올바른 숫자를 입력해주세요.");
+                            sc.nextLine(); // Clear invalid input
+                        }
+                    }
+                    break;
+
+                case "del":
+                    while (true){
+                        if (calculator.isListEmpty()){
+                            System.out.println("현재 연산결과가 없습니다.\n 처음으로 돌아갑니다.");
+                            break;
+                        }
+                        System.out.println("현재 연산결과는 "+ calculator.getSize()+ "개 있습니다.");
+                        System.out.println("삭제를 원하는 결과의 번호를 입력해주세요\n 1~ "+ calculator.getSize()+"\n 삭제를 나가시려면 0을 입력하세요.\n 전부 삭제하시려면 999을 입력하세요.");
+
+                        try {
+                            int checkNum = sc.nextInt();
+
+                            if (checkNum == 0) {
+                                sc.nextLine();
+                                break;
+                            } else if (checkNum == 999) {
+                                calculator.clearComputeList();
+                                sc.nextLine();
+                                break;
+                            } else {
+                                calculator.deleteResult(checkNum);
+                            }
+                        } catch (InputMismatchException e) {
+                            System.out.println("올바른 숫자를 입력해주세요.");
+                            sc.nextLine(); // Clear invalid input
+                        }
+                    }
+                    break;
+
+                default:
+                    System.out.println("입력받은 수식: "+ inputFormula);
+                    try{
+                        calculator.work(inputFormula);
+                    }
+                    catch (IllegalArgumentException e)
+                    {
+                        System.out.println("올바른 수식을 입력해주세요.");
+                    }
             }
-                
-            System.out.println("연산결과는: " + computeStack.pop());
-             */
-            
         }
         sc.close();
     }

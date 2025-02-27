@@ -24,14 +24,6 @@ class Calculator {
         q.add(c);
     }
 
-    List<Integer> getComputeList() {
-        return computeList;
-    }
-
-    void setCoputeList(List<Integer> computeList) {
-        this.computeList = computeList;
-    }
-
     void addNumberToPostFix(){
         String tempNumber="";
         while (q.peek()!=null && !q.isEmpty()){
@@ -78,7 +70,7 @@ class Calculator {
         }
     }
 
-    void postFix(String inputString){
+    void postFix (String inputString) throws IllegalArgumentException{
         removeSpace(inputString);
         for( Character c : inputString.toCharArray()){
             switch (c) {
@@ -148,4 +140,13 @@ class Calculator {
         postFix(inputFormula);
         computeNumber();
     }
+    boolean isListEmpty(){return computeList.isEmpty();}
+    int getSize(){return computeList.size();}
+    void checkResult(int i){
+        System.out.println(i+ "번 결과는: "+ computeList.get(i-1));
+    }
+    void deleteResult(int i){
+        computeList.remove(i-1);
+    }
+    void clearComputeList(){ computeList.clear();}
 }
