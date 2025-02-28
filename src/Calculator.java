@@ -61,6 +61,9 @@ public class Calculator {
         return inputFormula.replaceAll(" ", "");
     }
 
+    // 예비큐에 숫자 추가
+    // 큐에 들어간 숫자는 이후 기호를 만났을 때 한 덩어리로 묶여서 후위전환식 리스트에 추가됨
+    // 음수처리
     private void dealingNumber(Character c) {
         if (symbolize){
             q.add('-');
@@ -70,6 +73,7 @@ public class Calculator {
         temp=c.toString();
     }
 
+    // 예비큐에 있는 숫자를 후위전환식 리스트에 추가
     private void addNumberToPostFix(){
         String tempNumber="";
         while (q.peek()!=null && !q.isEmpty()){
@@ -78,18 +82,25 @@ public class Calculator {
         if (tempNumber!=""){postFix.add(tempNumber);}
     }
 
+    //후괄호 탐색시 호출
+    //전괄호 전까지 스택을 비우고 후위전환식 리스트에 추가
     private void emptyStackUntillPrearentheses() {
         while (!stack.isEmpty() && stack.peek() != '(') {
             postFix.add(stack.pop().toString());
         }
     }
 
+    //빠른 기호 처리(곱셈, 나눗셈, 모듈러 등)
+    //큐에 있는 숫자 리스트에 한 덩어리로 넘김
+    //스택에 기호 추가가
     private void dealingFastSymbols(Character c) {
         addNumberToPostFix();
         stack.push(c);
         temp="";
     }
 
+    //느린 기호 처리(덧셈, 뺄셈)
+    //뺄셈기호가 계산식이 아닌 음수기호로 사용될 때 처리
     private void dealingSlowSymbols(Character c) {
         if (temp.isEmpty() && c== '-'){
             symbolize= true;
@@ -101,6 +112,10 @@ public class Calculator {
         temp="";
     }
 
+    //전괄호 처리
+    //스택에 전괄호 추가.
+    //전괄호 앞에 숫자 없을 시 1 추가
+    //수식에서 전괄호는 곱셈과 같은 역활을 함
     private void dealingPrearentheses() {
         if (q.peek() == null) {
             q.add('1');
@@ -110,6 +125,8 @@ public class Calculator {
         temp="";
     }
 
+    //후괄호 처리
+    //스택에 있는 기호들을 전괄호가 나오기 전까지 모두 후위전환식 리스트에 추가
     private void dealingPostParentheses() {
         addNumberToPostFix();
         emptyStackUntillPrearentheses();
@@ -117,6 +134,9 @@ public class Calculator {
         temp="";
     }
 
+    //후위전환식 마무리
+    //큐에 있는 숫자 리스트에 한 덩어리로 넘김
+    //스택에 있는 기호들을 모두 후위전환식 리스트에 추가
     private void postFixingWrapUp() {
         addNumberToPostFix();
         while (!stack.isEmpty()) {
@@ -125,7 +145,8 @@ public class Calculator {
         temp="";
     }
 
-    private void postFix (String inputString) throws IllegalArgumentException{
+    //후위전환식으로 변환
+    private void postFix (String inputString) {
         String workingString= removeSpace(inputString);
         System.out.println(workingString);
         for( Character c : workingString.toCharArray()){
@@ -148,13 +169,17 @@ public class Calculator {
         postFixingWrapUp();
     }
 
+    //후위전환식 계산
     private void computeNumber(){
 
+        //후위전환식 문자열을 받아와 숫자일 경우 Double타입으로 캐스팅, 기호는 enum에서 명시된 동작 수행행
         for (String s : postFix) {
+            //숫자일 경우 동작
             try {
                 Double number= Double.valueOf(s);
                 number= Double.valueOf(s);
                 computeStack.push(number);
+            //기호일 경우 동작
             } catch (NumberFormatException e){
                 Symbols symbols= Symbols.getSymbolName(s.charAt(0));
                 double right= computeStack.pop();
@@ -163,12 +188,15 @@ public class Calculator {
                 computeStack.push((double)result);
             }
         }
+        //연산결과를 출력하고 결과리스트에 추가가
         Double computeResult= computeStack.pop();
         System.out.println("연산결과는: " + computeResult+ "입니다.");
         computeList.add(computeResult);
     }
 
-    public void work(String inputFormula){
+    //호출용 메소드
+    //입력받은 수식을 후위전환식으로 변환 후 계산
+    public void work(String inputFormula) throws IllegalArgumentException{
         stack.clear();
         q.clear();
         postFix.clear();
@@ -177,16 +205,23 @@ public class Calculator {
         postFix(inputFormula);
         computeNumber();
     }
+
+    //리스트 관련
+    //리스트 비어있는지 확인
     public boolean isListEmpty(){return computeList.isEmpty();}
+    //리스트 사이트 게터
     public int getSize(){return computeList.size();}
+    //결과리스트 인덱스를 받아서 출력
     public void checkResult(int i){
         System.out.println(i+ "번 결과는: "+ computeList.get(i-1));
     }
+    //결과리스트 인덱스를 받아서 삭제
     public void deleteResult(int i){
         computeList.remove(i-1);
     }
+    //결과리스트 전체 삭제
     public void clearComputeList(){ computeList.clear();}
-
+    //입력된 숫자보다 큰 숫자를 결과리스트에서 찾아서 출력
     public void isBigger(Double input){
         List<Double> biggerList= computeList.stream().filter(x-> x>input).toList();
         if(biggerList.isEmpty()){
