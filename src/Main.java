@@ -6,7 +6,7 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) {
-        try (Scanner sc = new Scanner(System.in)) {
+       Scanner sc = new Scanner(System.in);
             Calculator calculator = new Calculator();
             boolean flag = true;
             while (flag) {
@@ -126,7 +126,7 @@ public class Main {
                         }
                     }
                 }
-            }
+
         }
     }
 }

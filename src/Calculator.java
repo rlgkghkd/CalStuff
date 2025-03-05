@@ -44,7 +44,7 @@ enum Symbols{
     public char getSymbol(){return symbol;}
 }
 
-public class Calculator {
+public class Calculator<t> {
 
     // 후위전환식용 스택, 큐, 리스트, 임시문자
     private Stack<Character> stack = new Stack<>();
